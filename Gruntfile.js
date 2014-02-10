@@ -1,16 +1,37 @@
+
 module.exports = function(grunt) {
+
+  grunt.loadNpmTasks('grunt-forever');
+  grunt.loadNpmTasks('grunt-shell');
 
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+    sink : {
+        one: ['rand'],
+        two: 'om',
+        three:'data',
+    },
+
+
+
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
-      build: {
+    
+
+  build: {
         src: 'src/<%= pkg.name %>.js',
         dest: 'build/<%= pkg.name %>.min.js'
       }
+    },
+    forever: {
+        options: {
+            index: 'src/init.js',
+            logDir: 'logs'
+        }
     }
   });
 
@@ -19,5 +40,9 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['uglify']);
+
+  grunt.registerMultiTask('sink', 'kitchen et al', function() {
+    grunt.log.writeln(this.target+':'+this.data);
+  });
 
 };
