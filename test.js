@@ -38,7 +38,7 @@ browser
     return browser
       // waiting for app initialization
      //.waitForElementByXPath(tc('CordovaSpecRunner'), 10*TIME_BASE_UNIT)
-        .elementByName('main')
+        .elementById('cordova')
       //try to delete contact if it is there
       .then(function(err, el) {
         console.log('found element blah', err, el); 
