@@ -20,7 +20,8 @@
 var fs = require('fs'),
     exec = require('child_process').exec,
     child,
-    target_path = process.argv[2];
+    target_path = process.argv[2],
+    repoUpdateKey = "'origin/master' by ";
 
 
 
@@ -28,11 +29,14 @@ function checkstatus(exists) {
     console.log('checking status:', exists, target_path);
     if (exists) {
         fs.open(target_path + '/' + '.watcher','a', function(err, fd) {
-            console.log('check status of repo');
             process.chdir(target_path);
             child = exec('git status', function(error,stdout,stderr) {
                 var index = stdout.search('behind');
-                console.log(index);
+                if (index > -1) {
+                    var commits = stdout.search(repoUpdateKey);
+                    commits = stdout.substring(commits + repoUpdateKey.length, commits + repoUpdateKey.length + 1);
+
+                }
 /*
                 grep = exec('echo ' + stdout + ' | grep "behind"', function(error,stdout,stderr){
                     console.log(error,stdout,stderr);
