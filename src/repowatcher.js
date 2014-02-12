@@ -17,11 +17,52 @@
     under the License.
 */
 
-var path = process.argv[2];
+var fs = require('fs'),
+    exec = require('child_process').exec,
+    child,
+    target_path = process.argv[2];
+
+
+
+function checkstatus(exists) {
+    console.log('checking status:', exists, target_path);
+    if (exists) {
+        fs.open(target_path + '/' + '.watcher','a', function(err, fd) {
+            console.log('check status of repo');
+            process.chdir(target_path);
+            child = exec('git status', function(error,stdout,stderr) {
+                var index = stdout.search('behind');
+                console.log(index);
+/*
+                grep = exec('echo ' + stdout + ' | grep "behind"', function(error,stdout,stderr){
+                    console.log(error,stdout,stderr);
+                });
+*/
+                // grep for "Your branch is behind 'origin/master' by 1 commit" number of commits behind
+                //if behind, update
+
+//                once updated 
+                // checkout next commit
+                //generate project
+                // execute test on 
+                console.log(error,stdout,stderr);
+            }); 
+        });
+    } 
+}
 
 setInterval( function() {
-    if (!path) throw "Error: missing argument: target";
-    console.log("Repo Watcher Wakeup: watching " + path);
+    if (!target_path) throw "Error: missing argument: target";
+    
+    console.log("Repo Watcher Wakeup: watching " + target_path);
+
+    fs.exists(target_path + '/' + '.git', checkstatus);
+
+   // check path variable
+   // check path for git repo
+   // check path for "watcher.log" 
+
+
     try {    
     } catch(e) {
         console.log(e);
