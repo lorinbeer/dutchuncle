@@ -23,14 +23,14 @@ console.log("ama daemon");
 var repowatcher = function(repo) {
     console.log("Repo Watcher WakeUp");
     try {    
-        setTimeout(repowatcher(), 500);
+//        setTimeout(repowatcher(), 500);
     } catch(e) {
         console.log(e);
     }
 } 
 
 try {
-    repowatcher(env.target);
+    repowatcher(process.argv[2]);
 } catch(e) {
-    throw "Error: missing environment variable env.target";
+    throw "Error: missing argument: target";
 }
