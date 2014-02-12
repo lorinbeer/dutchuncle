@@ -9,7 +9,7 @@ module.exports = function (path) {
 
     watcher = new (forever.Monitor)('src/repowatcher.js', {
         max: 1,
-        silent: false,
+        silent: true,
         env: {'target':path},
         options: [path]
     });

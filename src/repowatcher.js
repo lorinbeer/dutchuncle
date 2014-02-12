@@ -17,20 +17,14 @@
     under the License.
 */
 
+var path = process.argv[2];
 
-console.log("ama daemon");
-
-var repowatcher = function(repo) {
-    console.log("Repo Watcher WakeUp");
+setInterval( function() {
+    if (!path) throw "Error: missing argument: target";
+    console.log("Repo Watcher Wakeup: watching " + path);
     try {    
-//        setTimeout(repowatcher(), 500);
     } catch(e) {
         console.log(e);
     }
-} 
+}, 1000); 
 
-try {
-    repowatcher(process.argv[2]);
-} catch(e) {
-    throw "Error: missing argument: target";
-}
