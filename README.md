@@ -20,5 +20,16 @@
 -->
 
 # Dutch Uncle
+Cross Platform Continuous Integration System for running integration and unit tests on mobile devices
 
+DU operates as a daemon process, which
+- monitors one or more github repo's for upstream changes
+- builds a test bench (application) for untested commits
+- runs test suite against build
+- reports results to a dashboard
 
+## Dependencies 
+
+- npmjs
+- Appium
+- Cordova CLI
