@@ -19,23 +19,29 @@
 
 var fs = require('fs'),
     exec = require('child_process').exec,
+    util = require('./util'),
     child,
     target_path = process.argv[2],
     repoUpdateKey = "'origin/master' by ";
 
 
-
-function checkstatus(exists) {
+function checkStatus(exists) {
     console.log('checking status:', exists, target_path);
     if (exists) {
         fs.open(target_path + '/' + '.watcher','a', function(err, fd) {
             process.chdir(target_path);
             child = exec('git status', function(error,stdout,stderr) {
                 var index = stdout.search('behind');
+                console.log(index);
                 if (index > -1) {
                     var commits = stdout.search(repoUpdateKey);
                     commits = stdout.substring(commits + repoUpdateKey.length, commits + repoUpdateKey.length + 1);
-
+                    child1 = exec('git log -n ' + commits + ' --no-merges' + ' --pretty=oneline', function(error,stdout,strerr) { console.log(stdout); 
+                        commitsha = stdout.split(" ")[0];
+                        util.checkoutCommit(commitsha, function(success) { 
+                        console.log('checked out to commit ', commitsha);});
+                        util.createTestBench(commitsha);                        
+                    });
                 }
 /*
                 grep = exec('echo ' + stdout + ' | grep "behind"', function(error,stdout,stderr){
@@ -49,7 +55,6 @@ function checkstatus(exists) {
                 // checkout next commit
                 //generate project
                 // execute test on 
-                console.log(error,stdout,stderr);
             }); 
         });
     } 
@@ -60,7 +65,7 @@ setInterval( function() {
     
     console.log("Repo Watcher Wakeup: watching " + target_path);
 
-    fs.exists(target_path + '/' + '.git', checkstatus);
+    fs.exists(target_path + '/' + '.git', checkStatus);
 
    // check path variable
    // check path for git repo
