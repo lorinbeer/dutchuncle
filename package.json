@@ -10,6 +10,7 @@
     "grunt-contrib-uglify": "~0.2.2",
     "daemon": "1.1.0",
     "forever-monitor": "1.2.3",
-    "cordova" : "3.3.x"
+    "cordova" : "3.3.x",
+    "q" : "1.0.0"
   }
 }
