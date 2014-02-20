@@ -1,55 +1,154 @@
 
 var exec = require('child_process').exec,
-    cordova = require('cordova');
+    path = require('path'),
+    root = path.resolve(__dirname),
+    Q = require('q');
+    cordova = require('cordova'),
+    config = require('../config'),
+    UtilModule = 0;
 
-module.exports = {
+function execOutputHandler(execCmd, err, stdout, stderr) {
+    if (err) {
+        console.log('whoopsie doodle: there was a problem when executing ' + execCmd);
+        console.log('resulted in: ', err, stdout, stderr);
+        return false; 
+    }
+    return true;
+};
+
+function installAllCDVPlugins() {
+    var child,
+        installplugin;
+};
+
+
+UtilModule = {
     /**
      *
      */
-    createTestBench : function(sha) {
+    createTestBench : function(platform, sha) {
         var child,
             projName = 'TestBench-' + sha,
-            projId = 'org.testbench.cordova';
+            projId = 'org.testbench.cordova',
+            cwd = process.cwd(),
+            addPlatformCmd = "";
 
-        console.log("utils createTestBench for commit ", sha);
+        UtilModule.createCordovaProject(projName,projId)
+            .then(function (err) {
+                process.chdir(cwd);
+                return UtilModule.addCordovaPlatform(projName, platform);
+            })
+            .then(function (err) {
+                process.chdir(cwd);
+                return UtilModule.addAllCDVPlugins(projName);
+        }).catch(function(err){
+            console.log(err);
+        });
 
-        child = exec('cordova create ' + projName  + ' ' + projId + ' ' + projName, function(err,stdout,stderr) {
-            console.log("cordova project created successfully", err);
-        
-           process.chdir(projName);              
-           exec('pwd', function(e,out,err) {console.log(out);});
-    
-           exec('cordova platform add android', function(e,out,err){
-                console.log(e,out,err);
-            
-//                exec('cordova platform add android', function(err,stdout,stderr) {
- //                 console.log("WHAT THE FUCK, CALL ME called promise");
-//                });
-                console.log("exec has been called");
-            });     
-
-       });
-
-/*function(e) {
-                console.log('test adding, did it work?', e);
-                if (e) {
-                    self.phonegap.emit('error', e);
-                    callback(e);
-                    return;
-                }
-//            }*///.then(function (a,b,c) {console.log("add called promise",a,b,c);});
-   //            var child1 = exec('cordova plugin add ' + path-to-allplugins);
     },
+
+
+    /**
+     *
+     */    
+    createCordovaProject : function(projectName,projectId) {
+        var q,
+            child,
+            creatCmd = "",
+            tempdir = config.temproot;
+
+        q = Q.defer();
+
+        process.chdir(path.normalize(tempdir));
+
+        child = exec('cordova create ' + projectName  + ' ' + projectId + ' ' + projectName, function(err,stdout,stderr) {
+            q.resolve([err,stdout,stderr]);
+       }); 
+       return q.promise;
+    },
+
+    addCordovaPlugin : function(projectPath,plugin) {
+        var q = Q.defer(),
+            child,
+            addCmd = 'cordova plugin add ';
+        process.chdir(path.join(config.temproot,projectPath));
+
+        exec(addCmd + plugin, function(err,stdout,stderr) {
+            if (err) {
+                q.reject([err,stdout,stderr]);
+            } else { 
+               q.resolve([err,stdout,stderr]);
+            }
+        });
+ 
+        return q.promise;
+    },
+
+    addAllCDVPlugins : function(projectPath) {
+        var q = Q.defer(),
+            cwd = root,
+            plugins = config.plugins,
+            tempdir = config.temproot;
+        
+        var recurseAdd = function (projectPath,plugins,i) {
+            // restore to the original working directory
+            process.chdir(cwd);
+            if (i >= plugins.length) {
+                q.resolve();
+                return;
+            }
+            UtilModule.addCordovaPlugin(projectPath,plugins[i]).then(function(err){
+                if (err) {
+                    q.reject(err);
+                }
+                recurseAdd(projectPath,plugins,i+1);
+            });
+        }
+
+        // bootstrap
+        recurseAdd(projectPath,plugins,0);
+
+        return q.promise;
+    },
+
+    /**
+     *
+     */
+    addCordovaPlatform : function(projectPath,platform) {
+        var q = Q.defer(),
+            child,
+            addPlatformCmd ='cordova platform add ' + platform;
+
+        process.chdir(path.join(config.temproot,projectPath));
+
+        child = exec(addPlatformCmd, function(err,stdout,stderr) {
+            if (err) {
+                q.reject([err,stdout,stderr]);
+            } else {
+                q.resolve([err,stdout,stderr]);
+            }
+        });
+        return q.promise;
+    },
+
+    /*
+     *
+     *
+    
+
     /**
      * 
      */
     checkoutCommit : function(sha,cb) {
         child = exec('git checkout ' + sha, function(err,stdout,stderr) {
-            console.log(err,stdout,stderr);
             cb(true);
         });
     }
 }
+
+
+module.exports = UtilModule;
+
 
 function testBench() {
     // directory to project

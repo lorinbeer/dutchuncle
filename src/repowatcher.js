@@ -36,11 +36,12 @@ function checkStatus(exists) {
                 if (index > -1) {
                     var commits = stdout.search(repoUpdateKey);
                     commits = stdout.substring(commits + repoUpdateKey.length, commits + repoUpdateKey.length + 1);
-                    child1 = exec('git log -n ' + commits + ' --no-merges' + ' --pretty=oneline', function(error,stdout,strerr) { console.log(stdout); 
+                    child1 = exec('git log -n ' + commits + ' --no-merges' + ' --pretty=oneline', function(error,stdout,strerr) { 
                         commitsha = stdout.split(" ")[0];
                         util.checkoutCommit(commitsha, function(success) { 
-                        console.log('checked out to commit ', commitsha);});
-                        util.createTestBench(commitsha);                        
+                            console.log('checked out to commit ', commitsha);});
+                        console.log("HEY HEY UTIL CREATE TEST BENCH");
+                        util.createTestBench('android',commitsha);                        
                     });
                 }
 /*
@@ -60,12 +61,15 @@ function checkStatus(exists) {
     } 
 }
 
-setInterval( function() {
+
+fs.exists(target_path + '/' + '.git', checkStatus);
+
+
+/*setInterval( function() {
     if (!target_path) throw "Error: missing argument: target";
     
     console.log("Repo Watcher Wakeup: watching " + target_path);
 
-    fs.exists(target_path + '/' + '.git', checkStatus);
 
    // check path variable
    // check path for git repo
@@ -77,4 +81,4 @@ setInterval( function() {
         console.log(e);
     }
 }, 1000); 
-
+*/
