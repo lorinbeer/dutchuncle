@@ -38,7 +38,7 @@ function checkStatus(exists) {
                     commits = stdout.substring(commits + repoUpdateKey.length, commits + repoUpdateKey.length + 1);
                     child1 = exec('git log -n ' + commits + ' --no-merges' + ' --pretty=oneline', function(error,stdout,strerr) { 
                         commitsha = stdout.split(" ")[0];
-                        util.checkoutCommit(commitsha, function(success) { 
+                        util.checkoutGitCommit(commitsha, function(success) { 
                             console.log('checked out to commit ', commitsha);});
                         console.log("HEY HEY UTIL CREATE TEST BENCH");
                         util.createTestBench('android',commitsha);                        
@@ -65,6 +65,15 @@ function checkStatus(exists) {
 fs.exists(target_path + '/' + '.git', checkStatus);
 
 
+/*
+*/
+/*
+checkStatus()
+.then(createTestBench)
+.then(compileTestBench)
+.then(findPackage)
+.then(runSuite);
+*/
 /*setInterval( function() {
     if (!target_path) throw "Error: missing argument: target";
     
