@@ -23,8 +23,9 @@ function installAllCDVPlugins() {
 
 
 UtilModule = {
+
     /**
-     *
+     * shortcut function for creating a Cordova TestBench
      */
     createTestBench : function(platform, sha) {
         var child,
@@ -32,19 +33,28 @@ UtilModule = {
             projId = 'org.testbench.cordova',
             cwd = process.cwd(),
             addPlatformCmd = "";
-
+/*
         UtilModule.createCordovaProject(projName,projId)
-            .then(function (err) {
-                process.chdir(cwd);
-                return UtilModule.addCordovaPlatform(projName, platform);
-            })
-            .then(function (err) {
-                process.chdir(cwd);
-                return UtilModule.addAllCDVPlugins(projName);
-        }).catch(function(err){
+        .then(function (err) {
+            process.chdir(cwd);
+            return UtilModule.addCordovaPlatform(projName, platform);
+        })
+        .then(function (err) {
+            process.chdir(cwd);
+            return UtilModule.addAllCDVPlugins(projName);
+        })
+        .then(function (err) {
+            process.chdir(cwd);
+            return UtilModule.cloneUnitTestApp(projName);
+        })
+        .then(function (err) {
+            process.chdir(cwd);
+            return UtilModule.buildCordovaProject(projName,platform);
+        })
+        .catch(function(err){
             console.log(err);
         });
-
+*/
     },
 
 
@@ -132,14 +142,53 @@ UtilModule = {
     },
 
     /*
+     * 
+     */
+    copyUnitTestSuite : function(projectPath) {
+/*
+        var q = Q.defer(),
+            child,
+            cloneCmd = 'git clone https://git-wip-us.apache.org/repos/asf/cordova-mobile-spec.git www/';
+
+            process.chdir(path.normalize(projectPath));
+ 
+            child = exec(cloneCmd, function(err,stdout,stderr) {
+                if (err) {
+                    q.reject([err,stdout,stderr]);
+                } else {
+                    q.resolve([err,stdout,stderr]);
+                }
+            }
+        return q.promise;
+*/
+    },
+
+
+    /*
      *
-     *
-    
+     */
+    buildCordovaProject : function(projectPath,platform) {
+        var q = Q.defer(),
+            child,
+            buildCmd = 'cordova build ' + platform;
+/*
+            process.chdir(path.normalize(projectPath));
+
+            child = exec(buildCmd, function(err,stdout,stderr) {
+                if (err) {
+                    q.reject([err,stdout,stderr]);
+                } else {
+                    q.resolve([err,stdout,stderr]);
+                }
+            }
+        return q.promise;
+*/
+    },
 
     /**
      * 
      */
-    checkoutCommit : function(sha,cb) {
+    checkoutGitCommit : function(sha,cb) {
         child = exec('git checkout ' + sha, function(err,stdout,stderr) {
             cb(true);
         });
