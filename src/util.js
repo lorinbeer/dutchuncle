@@ -130,7 +130,8 @@ UtilModule = {
             child,
             addPlatformCmd ='cordova platform add ' + platform;
 
-        process.chdir(path.join(config.temproot,projectPath));
+        process.chdir(path.join(UtilModule.getTempDirPath() ,projectPath));
+
         child = exec(addPlatformCmd, function(err,stdout,stderr) {
             if (err) {
                 q.reject([err,stdout,stderr]);
@@ -193,6 +194,13 @@ UtilModule = {
         child = exec('git checkout ' + sha, function(err,stdout,stderr) {
             cb(true);
         });
+    },
+    
+    /**
+     *
+     */
+    getTempDirPath : function() {
+        return config.temproot;
     }
 }
 
