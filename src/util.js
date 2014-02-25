@@ -1,5 +1,6 @@
 
 var exec = require('child_process').exec,
+    child = require('child_process'),
     path = require('path'),
     root = path.resolve(__dirname),
     Q = require('q');
@@ -84,7 +85,7 @@ UtilModule = {
             addCmd = 'cordova plugin add ';
         process.chdir(path.join(config.temproot,projectPath));
 
-        exec(addCmd + plugin, function(err,stdout,stderr) {
+        child.exec(addCmd + plugin, function(err,stdout,stderr) {
             if (err) {
                 q.reject([err,stdout,stderr]);
             } else { 
@@ -127,12 +128,11 @@ UtilModule = {
      */
     addCordovaPlatform : function(projectPath,platform) {
         var q = Q.defer(),
-            child,
             addPlatformCmd ='cordova platform add ' + platform;
 
         process.chdir(path.join(UtilModule.getTempDirPath() ,projectPath));
 
-        child = exec(addPlatformCmd, function(err,stdout,stderr) {
+        child.exec(addPlatformCmd, function(err,stdout,stderr) {
             if (err) {
                 q.reject([err,stdout,stderr]);
             } else {
@@ -171,33 +171,32 @@ UtilModule = {
      */
     buildCordovaProject : function(projectPath,platform) {
         var q = Q.defer(),
-            child,
             buildCmd = 'cordova build ' + platform;
-/*
-            process.chdir(path.normalize(projectPath));
 
-            child = exec(buildCmd, function(err,stdout,stderr) {
-                if (err) {
-                    q.reject([err,stdout,stderr]);
-                } else {
-                    q.resolve([err,stdout,stderr]);
-                }
+        process.chdir(path.join(UtilModule.getTempDirPath() ,projectPath));
+
+        child.exec(buildCmd, function(err,stdout,stderr) {
+            if (err) {
+                q.reject([err,stdout,stderr]);
+            } else {
+                q.resolve([err,stdout,stderr]);
             }
+        });
+
         return q.promise;
-*/
     },
 
     /**
      * 
      */
     checkoutGitCommit : function(sha,cb) {
-        child = exec('git checkout ' + sha, function(err,stdout,stderr) {
-            cb(true);
+        child.exec('git checkout ' + sha, function(err,stdout,stderr) {
+            cb(err,stdout,stderr);
         });
     },
     
     /**
-     *
+     * OSOT for temporary working directory
      */
     getTempDirPath : function() {
         return config.temproot;
