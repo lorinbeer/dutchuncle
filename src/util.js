@@ -33,12 +33,13 @@ UtilModule = {
             projId = 'org.testbench.cordova',
             cwd = process.cwd(),
             addPlatformCmd = "";
-/*
+
         UtilModule.createCordovaProject(projName,projId)
         .then(function (err) {
             process.chdir(cwd);
             return UtilModule.addCordovaPlatform(projName, platform);
         })
+/*
         .then(function (err) {
             process.chdir(cwd);
             return UtilModule.addAllCDVPlugins(projName);
@@ -130,7 +131,6 @@ UtilModule = {
             addPlatformCmd ='cordova platform add ' + platform;
 
         process.chdir(path.join(config.temproot,projectPath));
-
         child = exec(addPlatformCmd, function(err,stdout,stderr) {
             if (err) {
                 q.reject([err,stdout,stderr]);
@@ -138,6 +138,7 @@ UtilModule = {
                 q.resolve([err,stdout,stderr]);
             }
         });
+        
         return q.promise;
     },
 
