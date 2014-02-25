@@ -205,29 +205,3 @@ UtilModule = {
 
 
 module.exports = UtilModule;
-
-
-function testBench() {
-    // directory to project
-    // use cordova to create project
-    // use cordova to run/compile project
-}
-
-function initTestBench(plugins) {
-     
-}
-
-function clonegithubrepo() {
-    
-}
-
-function pullgithubrepo() {
-
-}
-
-function createcordovaproject() {
-/*
-    CREATE DIRECTLY FROM REPO
-    RUN PROJECT COMPILE
-    IF FAIL ERROR OU T */
-}
