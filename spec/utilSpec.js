@@ -1,40 +1,32 @@
 
 var Q = require('Q'),
-    path = require('path')
+    path = require('path'),
     child = require('child_process');
     
 describe("DU Util Test Suite", function () {
     var util = require('../src/util.js'),
         aBigFatLie = {},
-        config = { 'temproot' : "~/.cordovatestsuite" },
-        mockExecPass,
-        mockExecFail; 
+        mockExec;
 
     beforeEach(function () {
-        
-        aBigFatLie = {
-        'promise' : "I PROMISE",
-        'resolve' : function() {},
-        'reject' : function() {}
-        };
-
-        // mock function used by utils to change the working directory
+     // mock function used by utils to change the working directory
         process.chdir = function() {};
 
         spyOn(process,'chdir');
         spyOn(Q, 'defer');
-/*
-        mockExecPass = jasmine.createSpy('exec').andCallFake(function(cmd,cb) {
-            cb(null,"",null);
-        });
-*/
+        mockExec = spyOn(child, 'exec');   
     });
 
 
+    it("should have a getTempDirPath function which returns a path", function () {
+        var ret = util.getTempDirPath();    
+        expect(util.getTempDirPath).toBeDefined();
+        expect(ret).toBeDefined();
+    });
+
     describe("checkoutGitCommit unit tests", function() {
         var sha,
-            cb,
-            mockExecPass; 
+            cb;
 
         beforeEach(function () {
             sha = "whatarethechances"
@@ -43,11 +35,9 @@ describe("DU Util Test Suite", function () {
          // mock config object
             config = { 'temproot' : '/Users/defaultuser/.cordovatestsuite' },
             spyOn(config,'temproot'); 
-         
+
+         // spy on our target function and call it       
             spyOn(util,'checkoutGitCommit').andCallThrough();
-
-            mockExecPass = spyOn(child, 'exec');
-
             util.checkoutGitCommit(sha,cb);
         });
     
@@ -57,14 +47,14 @@ describe("DU Util Test Suite", function () {
 
         it("should attempt to checkout a git commit through executing a shell command", function () {
             expect(util.checkoutGitCommit).toHaveBeenCalledWith(sha,cb);
-            expect(mockExecPass).toHaveBeenCalled();
-            expect(mockExecPass.mostRecentCall.args[0]).toEqual('git checkout ' + sha);
+            expect(mockExec).toHaveBeenCalled();
+            expect(mockExec.mostRecentCall.args[0]).toEqual('git checkout ' + sha);
         });
 
     });
 
     //
-    describe("Cordova Utility Function Unit Tests", function() {
+    describe("Cordova Utility Function", function() {
         var testPath = "path/to/cordova/project",
             testPlatform = "nintendo-play-360-box", 
             config,
@@ -81,7 +71,7 @@ describe("DU Util Test Suite", function () {
         });
    
 
-        describe("'addCordovaPlatform Unit Tests", function () {
+        describe("'addCordovaPlatform'", function () {
             var promise;
             
             beforeEach(function () {
@@ -91,13 +81,16 @@ describe("DU Util Test Suite", function () {
 
             });
      
-            it("should have an 'addCordovaPlatform' function which returns a promise", function () {
+            it("should exist and return a promise", function () {
                 expect(util.addCordovaPlatform).toHaveBeenCalledWith(testPath,testPlatform);
                 expect(promise).toBeDefined();
             });
 
             it("should change working directories to the test suite temp directory offset by a valid cordova project path", function () {
                 expect(process.chdir).toHaveBeenCalledWith(path.join(util.getTempDirPath(),testPath));
+                expect(mockExec).toHaveBeenCalled();
+                expect(mockExec.mostRecentCall.args[0]).toEqual('cordova platform add ' + testPlatform);
+                console.log(mockExec);
             });
 
         });
@@ -112,25 +105,22 @@ describe("DU Util Test Suite", function () {
 
             });
      
-            it("should have an 'addCordovaPlatform' function which returns a promise", function () {
+            it("should have an 'buildCordovaProject' function which returns a promise", function () {
                 expect(util.buildCordovaProject).toHaveBeenCalledWith(testPath,testPlatform);
                 expect(promise).toBeDefined();
             });
 
             it("should change working directories to the test suite temp directory offset by a valid cordova project path", function () {
                 expect(process.chdir).toHaveBeenCalledWith(path.join(util.getTempDirPath(),testPath));
+                expect(mockExec).toHaveBeenCalled();
+                expect(mockExec.mostRecentCall.args[0]).toEqual('cordova build ' + testPlatform);
             });
 
         });
-
-
-
-
-
-
-
-
     });
+
+
+
 
    describe("buildCordovaProject unit tests", function() {
         var testPath = "path/to/cordova/project",
@@ -145,14 +135,14 @@ describe("DU Util Test Suite", function () {
             spyOn(config,'temproot'); 
          // mock the temp dir generation function in utils  
             spyOn(util,'getTempDirPath').andReturn("/Users/guy/.cordovatestsuite");
-            spyOn(util,'addCordovaPlatform').andCallThrough();
+            spyOn(util,'buildCordovaProject').andCallThrough();
  
-            promise = util.addCordovaPlatform(testPath, testPlatform);
+            promise = util.buildCordovaProject(testPath, testPlatform);
 
         });
     
-        it("should have an 'addCordovaPlatform' function which returns a promise", function () {
-            expect(util.addCordovaPlatform).toHaveBeenCalledWith(testPath,testPlatform);
+        it("should have an 'buildCordovaProject' function which returns a promise", function () {
+            expect(util.buildCordovaProject).toHaveBeenCalledWith(testPath,testPlatform);
             expect(promise).toBeDefined();
         });
 
