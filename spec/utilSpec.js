@@ -87,12 +87,11 @@ describe("DU Util Test Suite", function () {
 
         });
 
-
         describe("'addCordovaPlatform'", function () {
             var promise;
             
             beforeEach(function () {
-            // create spy and run function
+            // spy and call function
                spyOn(util,'addCordovaPlatform').andCallThrough();
                promise = util.addCordovaPlatform(testPath, testPlatform);
 
@@ -110,6 +109,35 @@ describe("DU Util Test Suite", function () {
             });
 
         });
+       
+        describe("'addCordovaPlugin'", function () {
+            var promise,
+                testPlugin = "org.cordova.test.plugin";
+            
+            beforeEach(function () {
+            // spy and call function
+               spyOn(util,'addCordovaPlugin').andCallThrough();
+               promise = util.addCordovaPlugin(testPath, testPlugin);
+            });
+     
+            it("should exist and return a promise", function () {
+                expect(util.addCordovaPlugin).toHaveBeenCalledWith(testPath,testPlugin);
+                expect(promise).toBeDefined();
+            });
+
+            it("should change working directories to the test suite temp directory offset by a valid cordova project path", function () {
+                expect(process.chdir).toHaveBeenCalledWith(path.join(util.getTempDirPath(),testPath));
+                expect(mockExec).toHaveBeenCalled();
+                expect(mockExec.mostRecentCall.args[0]).toEqual('cordova plugin add ' + testPlugin);
+            });
+
+            it("should shell out with a properly composed cordova build command", function () {
+                expect(mockExec).toHaveBeenCalled();
+                expect(mockExec.mostRecentCall.args[0]).toEqual('cordova plugin add ' + testPlugin);
+            });
+
+        });
+
 
         describe("'buldCordovaProject Unit Tests", function () {
             var promise;
