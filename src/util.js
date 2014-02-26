@@ -79,11 +79,11 @@ UtilModule = {
 
     addCordovaPlugin : function(projectPath,plugin) {
         var q = Q.defer(),
-            child,
-            addCmd = 'cordova plugin add ';
-        process.chdir(path.join(config.temproot,projectPath));
+            addCmd = 'cordova plugin add ' + plugin;
+        
+        process.chdir(path.join(UtilModule.getTempDirPath(),projectPath));
 
-        child.exec(addCmd + plugin, function(err,stdout,stderr) {
+        child.exec(addCmd, function(err,stdout,stderr) {
             if (err) {
                 q.reject([err,stdout,stderr]);
             } else { 
