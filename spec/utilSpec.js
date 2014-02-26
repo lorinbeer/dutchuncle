@@ -31,10 +31,6 @@ describe("DU Util Test Suite", function () {
         beforeEach(function () {
             sha = "whatarethechances"
             cb = function (err,stdout,stderr) {};
- 
-         // mock config object
-            config = { 'temproot' : '/Users/defaultuser/.cordovatestsuite' },
-            spyOn(config,'temproot'); 
 
          // spy on our target function and call it       
             spyOn(util,'checkoutGitCommit').andCallThrough();
@@ -59,17 +55,38 @@ describe("DU Util Test Suite", function () {
             testPlatform = "nintendo-play-360-box", 
             config,
             promise;
- 
 
         beforeEach(function () {
-         // mock config object
-            config = { 'temproot' : '/Users/defaultuser/.cordovatestsuite' },
-            spyOn(config,'temproot'); 
          // mock the temp dir generation function in utils  
-            spyOn(util,'getTempDirPath').andReturn("/Users/guy/.cordovatestsuite");
-
+            spyOn(util,'getTempDirPath').andReturn("/Users/defaultuser/.cordovatestsuite");
         });
    
+        describe("'createCordovaProject'", function () {
+            var testName = "ProjectTestName",
+                testId = "com.test.id";
+
+            beforeEach(function () {
+            // create spy and run function
+               spyOn(util,'createCordovaProject').andCallThrough();
+               promise = util.createCordovaProject(testName, testId);
+            });
+     
+            it("should be defined and return a promise", function () {
+                expect(util.createCordovaProject).toHaveBeenCalledWith(testName,testId);
+                expect(promise).toBeDefined();
+            });
+
+            it("should change working directories to the test suite temp directory offset by a valid cordova project path", function () {
+                expect(process.chdir).toHaveBeenCalledWith(util.getTempDirPath());
+            });
+
+            it("should shell out with a properly composed cordova build command", function () {
+                expect(mockExec).toHaveBeenCalled();
+                expect(mockExec.mostRecentCall.args[0]).toEqual('cordova create ' + testName + ' ' + testId + ' ' + testName);
+            });
+
+        });
+
 
         describe("'addCordovaPlatform'", function () {
             var promise;
@@ -90,7 +107,6 @@ describe("DU Util Test Suite", function () {
                 expect(process.chdir).toHaveBeenCalledWith(path.join(util.getTempDirPath(),testPath));
                 expect(mockExec).toHaveBeenCalled();
                 expect(mockExec.mostRecentCall.args[0]).toEqual('cordova platform add ' + testPlatform);
-                console.log(mockExec);
             });
 
         });
@@ -117,41 +133,7 @@ describe("DU Util Test Suite", function () {
             });
 
         });
-    });
 
-
-
-
-   describe("buildCordovaProject unit tests", function() {
-        var testPath = "path/to/cordova/project",
-            testPlatform = "nintendo-play-360-box", 
-            config,
-            promise;
- 
-
-        beforeEach(function () {
-         // mock config object
-            config = { 'temproot' : '/Users/defaultuser/.cordovatestsuite' },
-            spyOn(config,'temproot'); 
-         // mock the temp dir generation function in utils  
-            spyOn(util,'getTempDirPath').andReturn("/Users/guy/.cordovatestsuite");
-            spyOn(util,'buildCordovaProject').andCallThrough();
- 
-            promise = util.buildCordovaProject(testPath, testPlatform);
-
-        });
-    
-        it("should have an 'buildCordovaProject' function which returns a promise", function () {
-            expect(util.buildCordovaProject).toHaveBeenCalledWith(testPath,testPlatform);
-            expect(promise).toBeDefined();
-        });
-
-        it("should change working directories to the test suite temp directory offset by a valid cordova project path", function () {
-            expect(process.chdir).toHaveBeenCalledWith(path.join(util.getTempDirPath(),testPath));
-        });
 
     });
-
-
-
 });
