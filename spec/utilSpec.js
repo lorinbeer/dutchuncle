@@ -17,7 +17,6 @@ describe("DU Util Test Suite", function () {
         mockExec = spyOn(child, 'exec');   
     });
 
-
     it("should have a getTempDirPath function which returns a path", function () {
         var ret = util.getTempDirPath();    
         expect(util.getTempDirPath).toBeDefined();
@@ -138,7 +137,6 @@ describe("DU Util Test Suite", function () {
 
         });
 
-
         describe("'buldCordovaProject Unit Tests", function () {
             var promise;
             
@@ -161,7 +159,6 @@ describe("DU Util Test Suite", function () {
             });
 
         });
-
 
     });
 });

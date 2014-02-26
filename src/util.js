@@ -36,27 +36,31 @@ UtilModule = {
             addPlatformCmd = "";
 
         UtilModule.createCordovaProject(projName,projId)
+
         .then(function (err) {
             process.chdir(cwd);
             return UtilModule.addCordovaPlatform(projName, platform);
         })
-/*
+
         .then(function (err) {
             process.chdir(cwd);
             return UtilModule.addAllCDVPlugins(projName);
         })
+
         .then(function (err) {
             process.chdir(cwd);
             return UtilModule.cloneUnitTestApp(projName);
         })
+
         .then(function (err) {
             process.chdir(cwd);
             return UtilModule.buildCordovaProject(projName,platform);
         })
+
         .catch(function(err){
             console.log(err);
         });
-*/
+
     },
 
 
