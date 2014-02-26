@@ -65,15 +65,13 @@ UtilModule = {
      */    
     createCordovaProject : function(projectName,projectId) {
         var q,
-            child,
-            creatCmd = "",
-            tempdir = config.temproot;
+            createCmd = "cordova create " + projectName + ' ' + projectId + ' ' + projectName;
 
         q = Q.defer();
 
-        process.chdir(path.normalize(tempdir));
+        process.chdir(path.normalize(UtilModule.getTempDirPath()));
 
-        child = exec('cordova create ' + projectName  + ' ' + projectId + ' ' + projectName, function(err,stdout,stderr) {
+        child.exec(createCmd, function(err,stdout,stderr) {
             q.resolve([err,stdout,stderr]);
        }); 
        return q.promise;
